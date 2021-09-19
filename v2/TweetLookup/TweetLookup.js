@@ -1,5 +1,5 @@
 /* vanilla Tweet Lookup
-Поиск твита по ID
+* Поиск твита по ID
 documentation
 https://developer.twitter.com/en/docs/twitter-api/tweets/lookup/introduction
 

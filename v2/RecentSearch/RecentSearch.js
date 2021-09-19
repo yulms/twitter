@@ -1,5 +1,5 @@
 /*
-Поиск последних твитов - задержка ~ 12 сек
+* Поиск последних твитов (за 7 дней) - задержка ~ 12 сек
 documentation
 https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference
 
@@ -34,23 +34,28 @@ class RecentSearch {
   }
 }
 
-async function getRecentTwits(count = 1) {
-  console.log(count);
+async function getRecentTwits() {
   const recentSearch = new RecentSearch();
   const params = {
     query: 'from:Yury73128589',
   };
   try {
     const response = await recentSearch.getRequest(params);
-    // console.dir(response, {
-    //   depth: null,
-    // });
-    const latestTweet = response.data[0].text;
-    if (latestTweet === 'catch4!') {
-      console.log('Попался!', latestTweet);
-      return;
-    }
-    setTimeout(getRecentTwits, 1000, count + 1);
+    /* response {
+      data: [
+        { id: '1439473938283773954', text: 'И снова привет!' },
+        { id: '1439473183606837249', text: 'Hi!' }
+      ],
+      meta: {
+        newest_id: '1439473938283773954',
+        oldest_id: '1439473183606837249',
+        result_count: 2
+      }
+    } */
+    console.dir(response, {
+      depth: null,
+    });
+    // const latestTweet = response.data[0].text;
   } catch (err) {
     console.log(err);
     process.exit(-1);

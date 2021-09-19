@@ -18,11 +18,13 @@ import 'dotenv/config';
 import needle from 'needle';
 
 class UserTweets {
-  constructor(userId) {
+  constructor({ userId, userName }) {
     this.userId = userId;
+    this.userName = userName;
     this.url = `https://api.twitter.com/2/users/${userId}/tweets`;
-    // для поиска по имени аккаунта
-    // https://api.twitter.com/2/users/by/username/:username/tweets
+    // для поиска по имени аккаунта - почему то возвращает 404, проблема твиттера?
+    // this.url = `https://api.twitter.com/2/users/by/username/${userName}/tweets`;
+    console.log(this.url);
   }
 
   async getUserTweets() {
@@ -32,6 +34,7 @@ class UserTweets {
       max_results: 100,
       'tweet.fields': 'created_at',
       expansions: 'author_id',
+      start_time: '2021-03-19T00:00:00Z', // ISO
     };
 
     const options = {
@@ -63,9 +66,6 @@ class UserTweets {
       }
     }
 
-    console.dir(userTweets, {
-      depth: null,
-    });
     console.log(`Got ${userTweets.length} Tweets from ${userName} (user ID ${this.userId})!`);
     return userTweets;
   }
@@ -87,16 +87,26 @@ class UserTweets {
   }
 }
 
-async function startRecursion(count = 1) {
-  const userId = '1392380359342444545'; // Yury73128589
-  const userTweets = new UserTweets(userId);
-  const tweets = await userTweets.getUserTweets();
-  const latestTweet = tweets[0].text;
-  if (latestTweet === 'catch2!') {
-    console.log('Попался!', latestTweet);
-    return;
-  }
-  setTimeout(startRecursion, 300, count + 1);
-}
+// async function startRecursion(count = 1) {
+//   const userId = '1392380359342444545'; // Yury73128589
+//   const userTweets = new UserTweets(userId);
+//   const tweets = await userTweets.getUserTweets();
+//   const latestTweet = tweets[0].text;
+//   if (latestTweet === 'catch2!') {
+//     console.log('Попался!', latestTweet);
+//     return;
+//   }
+//   setTimeout(startRecursion, 300, count + 1);
+// }
+// startRecursion();
 
-startRecursion();
+// const userTweets = new UserTweets({ userId: '574032254' }); // coinbase
+// const relevanceKeyword = 'launching on';
+const userTweets = new UserTweets({ userId: '720487892670410753' }); // coinbasePro
+const relevanceKeyword = 'are now available in the regions';
+const tweets = await userTweets.getUserTweets();
+console.log(tweets.length);
+const relevanceTweets = tweets.filter((tweet) => tweet.text.includes(relevanceKeyword));
+const relevanceTweetsText = relevanceTweets.map((tweet) => tweet.text);
+console.log(relevanceTweetsText.length);
+console.log(relevanceTweetsText);
