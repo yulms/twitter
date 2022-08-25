@@ -27,14 +27,14 @@ class UserTweets {
     console.log(this.url);
   }
 
-  async getUserTweets() {
+  async getUserTweets(startTime) {
     const userTweets = [];
     // we request the author_id expansion so that we can print out the user name later
     const params = {
       max_results: 100,
       'tweet.fields': 'created_at',
       expansions: 'author_id',
-      start_time: '2021-03-19T00:00:00Z', // ISO
+      start_time: startTime,
     };
 
     const options = {
@@ -104,9 +104,14 @@ class UserTweets {
 // const relevanceKeyword = 'launching on';
 const userTweets = new UserTweets({ userId: '720487892670410753' }); // coinbasePro
 const relevanceKeyword = 'are now available in the regions';
-const tweets = await userTweets.getUserTweets();
-console.log(tweets.length);
+const tweets = await userTweets.getUserTweets('2021-03-19T00:00:00Z'); // ISO
 const relevanceTweets = tweets.filter((tweet) => tweet.text.includes(relevanceKeyword));
-const relevanceTweetsText = relevanceTweets.map((tweet) => tweet.text);
-console.log(relevanceTweetsText.length);
-console.log(relevanceTweetsText);
+console.log(`Всего релевантных твитов: ${relevanceTweets.length}`);
+// console.log(relevanceTweets);
+
+// const relevanceTweetsText = relevanceTweets.map((tweet) => tweet.text);
+const relevanceTweetsDayOfWeek = relevanceTweets.map((tweet) => new Date(tweet.created_at).getDay());
+console.log(relevanceTweetsDayOfWeek);
+
+// console.log(relevanceTweetsText.length);
+// console.log(relevanceTweetsText);
